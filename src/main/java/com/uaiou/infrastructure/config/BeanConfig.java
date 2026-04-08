@@ -1,8 +1,11 @@
 package com.uaiou.infrastructure.config;
 
+import com.uaiou.core.domain.gateway.DeliveryPersonGateway;
+import com.uaiou.core.domain.gateway.EstablishmentGateway;
 import com.uaiou.core.domain.gateway.UserGateway;
 import com.uaiou.core.usecase.user.CreateUserUseCase;
 import com.uaiou.core.usecase.user.FindUserByIdUseCase;
+import com.uaiou.core.usecase.user.RegisterUserUseCase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,5 +25,12 @@ public class BeanConfig {
     @Bean
     public FindUserByIdUseCase findUserByIdUseCase(UserGateway userGateway) {
         return new FindUserByIdUseCase(userGateway);
+    }
+
+    @Bean
+    public RegisterUserUseCase registerUserUseCase(UserGateway userGateway,
+                                                    DeliveryPersonGateway deliveryPersonGateway,
+                                                    EstablishmentGateway establishmentGateway) {
+        return new RegisterUserUseCase(userGateway, deliveryPersonGateway, establishmentGateway);
     }
 }

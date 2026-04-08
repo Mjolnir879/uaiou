@@ -23,8 +23,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DomainException.class)
     public ResponseEntity<Map<String, Object>> handleDomainException(DomainException ex) {
-        Map<String, Object> body = buildErrorBody(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(body);
+        HttpStatus status = HttpStatus.valueOf(422);
+        Map<String, Object> body = buildErrorBody(status, ex.getMessage());
+        return ResponseEntity.status(status).body(body);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
