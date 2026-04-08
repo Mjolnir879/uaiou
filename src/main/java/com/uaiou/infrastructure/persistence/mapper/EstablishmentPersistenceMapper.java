@@ -25,6 +25,7 @@ public interface EstablishmentPersistenceMapper {
             ue.setId(est.getOwner().getId());
             ue.setUsername(est.getOwner().getUsername());
             ue.setEmail(est.getOwner().getEmail());
+            ue.setPasswordHash(est.getOwner().getPasswordHash());
             ue.setPhoneNumber(est.getOwner().getPhoneNumber());
             ue.setActive(est.getOwner().isActive());
             ue.setCreatedAt(est.getOwner().getCreatedAt());
@@ -42,6 +43,7 @@ public interface EstablishmentPersistenceMapper {
             var ue = entity.getOwner();
             owner = com.uaiou.core.domain.entity.User.reconstitute(
                     ue.getId(), ue.getUsername(), ue.getEmail(),
+                    ue.getPasswordHash(),
                     ue.getPhoneNumber(), ue.isActive(), ue.getCreatedAt()
             );
         }

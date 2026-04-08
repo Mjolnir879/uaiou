@@ -17,6 +17,7 @@ public interface UserPersistenceMapper {
                 entity.getId(),
                 entity.getUsername(),
                 entity.getEmail(),
+            entity.getPasswordHash(),
                 entity.getPhoneNumber(),
                 entity.isActive(),
                 entity.getCreatedAt()

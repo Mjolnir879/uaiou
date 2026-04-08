@@ -6,6 +6,7 @@ public record RegisterUserInput(
         // User fields
         String username,
         String email,
+        String passwordHash,
         String phoneNumber,
 
         // Type discriminator

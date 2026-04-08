@@ -23,6 +23,7 @@ public interface DeliveryPersonPersistenceMapper {
             ue.setId(dp.getUser().getId());
             ue.setUsername(dp.getUser().getUsername());
             ue.setEmail(dp.getUser().getEmail());
+            ue.setPasswordHash(dp.getUser().getPasswordHash());
             ue.setPhoneNumber(dp.getUser().getPhoneNumber());
             ue.setActive(dp.getUser().isActive());
             ue.setCreatedAt(dp.getUser().getCreatedAt());
@@ -40,6 +41,7 @@ public interface DeliveryPersonPersistenceMapper {
             var ue = entity.getUser();
             user = com.uaiou.core.domain.entity.User.reconstitute(
                     ue.getId(), ue.getUsername(), ue.getEmail(),
+                    ue.getPasswordHash(),
                     ue.getPhoneNumber(), ue.isActive(), ue.getCreatedAt()
             );
         }

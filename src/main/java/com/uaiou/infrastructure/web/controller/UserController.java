@@ -10,6 +10,7 @@ import com.uaiou.infrastructure.web.mapper.UserDtoMapper;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -21,18 +22,27 @@ public class UserController {
     private final CreateUserUseCase createUserUseCase;
     private final FindUserByIdUseCase findUserByIdUseCase;
     private final UserDtoMapper mapper;
+    private final PasswordEncoder passwordEncoder;
 
     public UserController(CreateUserUseCase createUserUseCase,
                           FindUserByIdUseCase findUserByIdUseCase,
-                          UserDtoMapper mapper) {
+                          UserDtoMapper mapper,
+                          PasswordEncoder passwordEncoder) {
         this.createUserUseCase = createUserUseCase;
         this.findUserByIdUseCase = findUserByIdUseCase;
         this.mapper = mapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping
     public ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUserRequest request) {
-        CreateUserInput input = mapper.toInput(request);
+        CreateUserInput mappedInput = mapper.toInput(request);
+        CreateUserInput input = new CreateUserInput(
+                mappedInput.username(),
+                mappedInput.email(),
+                passwordEncoder.encode(request.password()),
+                mappedInput.phoneNumber()
+        );
         CreateUserOutput output = createUserUseCase.execute(input);
         UserResponse response = mapper.toResponse(output);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

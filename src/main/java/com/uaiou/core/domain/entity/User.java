@@ -8,6 +8,7 @@ public class User {
     private UUID id;
     private String username;
     private String email;
+    private String passwordHash;
     private String phoneNumber;
     private boolean active;
     private LocalDateTime createdAt;
@@ -15,10 +16,11 @@ public class User {
     private User() {
     }
 
-    private User(UUID id, String username, String email, String phoneNumber, boolean active, LocalDateTime createdAt) {
+    private User(UUID id, String username, String email, String passwordHash, String phoneNumber, boolean active, LocalDateTime createdAt) {
         this.id = id;
         this.username = username;
         this.email = email;
+        this.passwordHash = passwordHash;
         this.phoneNumber = phoneNumber;
         this.active = active;
         this.createdAt = createdAt;
@@ -27,18 +29,22 @@ public class User {
     /**
      * Factory method to create a new User with auto-generated UUID and timestamp.
      */
-    public static User create(String username, String email, String phoneNumber) {
+    public static User create(String username, String email, String passwordHash, String phoneNumber) {
         if (username == null || username.isBlank()) {
             throw new IllegalArgumentException("Username must not be blank");
         }
         if (email == null || email.isBlank()) {
             throw new IllegalArgumentException("Email must not be blank");
         }
+        if (passwordHash == null || passwordHash.isBlank()) {
+            throw new IllegalArgumentException("Password hash must not be blank");
+        }
 
         return new User(
                 UUID.randomUUID(),
                 username,
                 email,
+                passwordHash,
                 phoneNumber,
                 true,
                 LocalDateTime.now()
@@ -48,8 +54,8 @@ public class User {
     /**
      * Reconstitution factory — used to rebuild a domain entity from persistence.
      */
-    public static User reconstitute(UUID id, String username, String email, String phoneNumber, boolean active, LocalDateTime createdAt) {
-        return new User(id, username, email, phoneNumber, active, createdAt);
+    public static User reconstitute(UUID id, String username, String email, String passwordHash, String phoneNumber, boolean active, LocalDateTime createdAt) {
+        return new User(id, username, email, passwordHash, phoneNumber, active, createdAt);
     }
 
     public void deactivate() {
@@ -72,6 +78,10 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
     public String getPhoneNumber() {

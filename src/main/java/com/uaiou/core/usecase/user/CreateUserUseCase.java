@@ -23,7 +23,7 @@ public class CreateUserUseCase {
             throw new EmailAlreadyExistsException(input.email());
         }
 
-        User user = User.create(input.username(), input.email(), input.phoneNumber());
+        User user = User.create(input.username(), input.email(), input.passwordHash(), input.phoneNumber());
         User savedUser = userGateway.save(user);
 
         return new CreateUserOutput(
