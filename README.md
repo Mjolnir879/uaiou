@@ -200,6 +200,31 @@ Migrações relevantes:
 
 - `V1__create_initial_schema.sql`
 - `V2__add_users_password_hash.sql`
+- `V3__create_delivery_schema.sql`
+- `V4__harden_delivery_business_constraints.sql`
+
+## Núcleo de Entregas
+
+O projeto possui endpoints para pedidos, entregas, avaliações e tipos de pedido:
+
+- `POST /orders`
+- `GET /orders`
+- `GET /orders/{id}`
+- `PATCH /orders/{id}`
+- `DELETE /orders/{id}`
+- `POST /deliveries`
+- `GET /deliveries`
+- `GET /deliveries/{id}`
+- `PATCH /deliveries/{id}/status`
+- `PATCH /deliveries/{id}/paid`
+- `POST /evaluations`
+- `GET /evaluations`
+- `GET /evaluations/{id}`
+- `GET /order-types`
+
+Documentação OpenAPI do núcleo em:
+
+- `src/main/resources/openapi-delivery.yaml`
 
 ## Observações
 

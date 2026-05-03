@@ -1,0 +1,464 @@
+openapi: 3.0.3
+info:
+  title: UAiOU Delivery Core API
+  version: 1.0.0
+  description: Endpoints do nucleo de entregas (orders, deliveries, evaluations, order-types).
+servers:
+  - url: http://localhost:8081
+paths:
+  /orders:
+    post:
+      summary: Criar pedido
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+      responses:
+        '201':
+          description: Pedido criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+    get:
+      summary: Listar pedidos
+      parameters:
+        - in: query
+          name: establishmentId
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: status
+          schema:
+            $ref: '#/components/schemas/DeliveryStatusEnum'
+        - in: query
+          name: delivered
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Lista de pedidos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderResponse'
+  /orders/{id}:
+    get:
+      summary: Buscar pedido por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Pedido encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+    patch:
+      summary: Atualizar pedido
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Pedido atualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+    delete:
+      summary: Remover pedido
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Pedido removido
+
+  /deliveries:
+    post:
+      summary: Criar entrega e vincular pedidos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDeliveryRequest'
+      responses:
+        '201':
+          description: Entrega criada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryResponse'
+    get:
+      summary: Listar entregas
+      parameters:
+        - in: query
+          name: deliveryPersonId
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: establishmentId
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: status
+          schema:
+            $ref: '#/components/schemas/DeliveryStatusEnum'
+      responses:
+        '200':
+          description: Lista de entregas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeliveryResponse'
+
+  /deliveries/{id}:
+    get:
+      summary: Buscar entrega por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Entrega encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryResponse'
+
+  /deliveries/{id}/status:
+    patch:
+      summary: Atualizar status da entrega
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDeliveryStatusRequest'
+      responses:
+        '200':
+          description: Status atualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryResponse'
+
+  /deliveries/{id}/paid:
+    patch:
+      summary: Marcar entrega como paga
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Entrega marcada como paga
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryResponse'
+
+  /evaluations:
+    post:
+      summary: Criar avaliacao
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEvaluationRequest'
+      responses:
+        '201':
+          description: Avaliacao criada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvaluationResponse'
+    get:
+      summary: Listar avaliacoes
+      parameters:
+        - in: query
+          name: type
+          schema:
+            $ref: '#/components/schemas/EvaluationTypeEnum'
+        - in: query
+          name: establishmentId
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: deliveryPersonId
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Lista de avaliacoes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EvaluationResponse'
+
+  /evaluations/{id}:
+    get:
+      summary: Buscar avaliacao por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Avaliacao encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvaluationResponse'
+
+  /order-types:
+    get:
+      summary: Listar tipos disponiveis
+      responses:
+        '200':
+          description: Lista de tipos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderTypeResponse'
+
+components:
+  schemas:
+    DeliveryStatusEnum:
+      type: string
+      enum:
+        - PENDING
+        - FINISHED
+        - CANCELED
+        - NOT_DELIVERED
+        - AVAILABLE
+
+    EvaluationTypeEnum:
+      type: string
+      enum:
+        - ESTABLISHMENT_EVALUATION
+        - DELIVERY_EVALUATION
+
+    OrderSpecificsEnum:
+      type: string
+      enum:
+        - THERMICCOLD
+        - THERMICHOT
+
+    CreateOrderRequest:
+      type: object
+      required: [name, specifics, addressId, establishmentId, orderTypeCode]
+      properties:
+        name:
+          type: string
+        specifics:
+          $ref: '#/components/schemas/OrderSpecificsEnum'
+        addressId:
+          type: string
+          format: uuid
+        establishmentId:
+          type: string
+          format: uuid
+        orderTypeCode:
+          type: string
+
+    CreateDeliveryRequest:
+      type: object
+      required: [deliveryPersonId, establishmentId, orderIds, addressId, value]
+      properties:
+        deliveryPersonId:
+          type: string
+          format: uuid
+        establishmentId:
+          type: string
+          format: uuid
+        orderIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        addressId:
+          type: string
+          format: uuid
+        value:
+          type: number
+          format: double
+
+    UpdateDeliveryStatusRequest:
+      type: object
+      required: [status]
+      properties:
+        status:
+          $ref: '#/components/schemas/DeliveryStatusEnum'
+
+    CreateEvaluationRequest:
+      type: object
+      required: [rating, note, type]
+      properties:
+        rating:
+          type: number
+          format: double
+          minimum: 1
+          maximum: 5
+        note:
+          type: string
+        establishmentId:
+          type: string
+          format: uuid
+        deliveryPersonId:
+          type: string
+          format: uuid
+        type:
+          $ref: '#/components/schemas/EvaluationTypeEnum'
+
+    OrderResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        number:
+          type: integer
+        name:
+          type: string
+        specifics:
+          $ref: '#/components/schemas/OrderSpecificsEnum'
+        addressId:
+          type: string
+          format: uuid
+        establishmentId:
+          type: string
+          format: uuid
+        deliveryId:
+          type: string
+          format: uuid
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        deliveredAt:
+          type: string
+          format: date-time
+          nullable: true
+        delivered:
+          type: boolean
+        typeCode:
+          type: string
+
+    DeliveryResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        number:
+          type: integer
+        deliveryPersonId:
+          type: string
+          format: uuid
+        establishmentId:
+          type: string
+          format: uuid
+        orderIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        addressId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        deliveredAt:
+          type: string
+          format: date-time
+          nullable: true
+        isFinished:
+          type: boolean
+        status:
+          $ref: '#/components/schemas/DeliveryStatusEnum'
+        value:
+          type: number
+          format: double
+        paid:
+          type: boolean
+
+    EvaluationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        rating:
+          type: number
+          format: double
+        note:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        establishmentId:
+          type: string
+          format: uuid
+          nullable: true
+        deliveryPersonId:
+          type: string
+          format: uuid
+          nullable: true
+        type:
+          $ref: '#/components/schemas/EvaluationTypeEnum'
+
+    OrderTypeResponse:
+      type: object
+      properties:
+        code:
+          type: string

@@ -9,36 +9,36 @@ import java.util.UUID;
 public class Address {
 
     private final UUID id;
-    private final String street;
-    private final String number;
-    private final String complement;
-    private final String neighborhood;
+    private final String line1;
+    private final String line2;
     private final String city;
     private final String state;
-    private final String zipCode;
+    private final String postalCode;
+    private final String neighborhood;
     private final Double latitude;
     private final Double longitude;
 
-    public Address(UUID id, String street, String number, String complement,
-                   String neighborhood, String city, String state, String zipCode,
+    public Address(UUID id, String line1, String line2,
+                   String city, String state, String postalCode,
+                   String neighborhood,
                    Double latitude, Double longitude) {
         this.id = id;
-        this.street = street;
-        this.number = number;
-        this.complement = complement;
-        this.neighborhood = neighborhood;
+        this.line1 = line1;
+        this.line2 = line2;
         this.city = city;
         this.state = state;
-        this.zipCode = zipCode;
+        this.postalCode = postalCode;
+        this.neighborhood = neighborhood;
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
-    public static Address create(String street, String number, String complement,
-                                  String neighborhood, String city, String state, String zipCode,
+    public static Address create(String line1, String line2,
+                                  String city, String state, String postalCode,
+                                  String neighborhood,
                                   Double latitude, Double longitude) {
-        if (street == null || street.isBlank()) {
-            throw new IllegalArgumentException("Street must not be blank");
+        if (line1 == null || line1.isBlank()) {
+            throw new IllegalArgumentException("Line 1 must not be blank");
         }
         if (city == null || city.isBlank()) {
             throw new IllegalArgumentException("City must not be blank");
@@ -47,7 +47,7 @@ public class Address {
             throw new IllegalArgumentException("State must not be blank");
         }
 
-        return new Address(UUID.randomUUID(), street, number, complement, neighborhood, city, state, zipCode, latitude, longitude);
+        return new Address(UUID.randomUUID(), line1, line2, city, state, postalCode, neighborhood, latitude, longitude);
     }
 
     // --- Getters ---
@@ -56,20 +56,12 @@ public class Address {
         return id;
     }
 
-    public String getStreet() {
-        return street;
+    public String getLine1() {
+        return line1;
     }
 
-    public String getNumber() {
-        return number;
-    }
-
-    public String getComplement() {
-        return complement;
-    }
-
-    public String getNeighborhood() {
-        return neighborhood;
+    public String getLine2() {
+        return line2;
     }
 
     public String getCity() {
@@ -80,8 +72,12 @@ public class Address {
         return state;
     }
 
-    public String getZipCode() {
-        return zipCode;
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public String getNeighborhood() {
+        return neighborhood;
     }
 
     public Double getLatitude() {
